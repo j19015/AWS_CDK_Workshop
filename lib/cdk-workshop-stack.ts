@@ -7,6 +7,10 @@ export class CdkWorkshopStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
-   
+    // vpc を宣言
+    const vpc = new ec2.Vpc(this, "BlogVpc", {
+      ipAddresses: ec2.IpAddresses.cidr('10.0.0.0/16'),
+    });
+    
   }
 }
