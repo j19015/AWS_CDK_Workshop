@@ -7,6 +7,9 @@ import * as ec2 from "aws-cdk-lib/aws-ec2";
 // ファイルを読み込むためのパッケージを import
 import { readFileSync } from "fs";
 
+// rds のパッケージを import
+import * as rds from "aws-cdk-lib/aws-rds";
+
 export class CdkWorkshopStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
@@ -44,6 +47,20 @@ export class CdkWorkshopStack extends Stack {
     new CfnOutput(this, "WordpressServer1PublicIPAddress", {
       value: `http://${webServer1.instancePublicIp}`,
     });
+    
+    // RDS のインスタンスを宣言
+    const dbServer = new rds.DatabaseInstance(this, "WordPressDB", {
+      vpc,
+      // DatabaseInstanceEngine クラスを利用してデータベースエンジンを設定
+      engine: rds.DatabaseInstanceEngine.mysql({ version: rds.MysqlEngineVersion.VER_8_0_31 }),
+      // RDS DB インスタンスのインスタンスタイプを設定
+      instanceType: ec2.InstanceType.of(ec2.InstanceClass.T2, ec2.InstanceSize.SMALL),
+      // RDS DB インスタンスのデータベース名を設定
+      databaseName: "wordpress",
+    });
+    
+    // WebServer からのアクセスを許可
+    dbServer.connections.allowDefaultPortFrom(webServer1);
     
   }
 }
