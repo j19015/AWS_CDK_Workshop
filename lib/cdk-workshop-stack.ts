@@ -67,7 +67,9 @@ export class CdkWorkshopStack extends Stack {
     // インスタンスをターゲットに追加
     listener.addTargets("ApplicationFleet", {
       port: 80,
-      targets: [new targets.InstanceTarget(webServer1.instance, 80)],
+      targets: [new targets.InstanceTarget(webServer1.instance, 80),
+        // ターゲットに 2 台目のインスタンスを追加
+        new targets.InstanceTarget(webServer2.instance, 80)],
       healthCheck: {
         path: "/wp-includes/images/blank.gif",
       },
